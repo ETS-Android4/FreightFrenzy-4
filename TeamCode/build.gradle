@@ -19,9 +19,13 @@ android {
     androidResources {
         noCompress 'tflite'
     }
+    buildFeatures {
+        mlModelBinding true
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
