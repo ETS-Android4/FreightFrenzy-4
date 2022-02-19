@@ -39,7 +39,7 @@ import org.firstinspires.ftc.teamcode.subassemblies.Shooter;
 
 
 //***************************************************************************************************************************
-@TeleOp(name = "Tele Array")
+@TeleOp(name = "Tele Array", group = "TeleDrive")
 public class TeleArrayAS extends LinearOpMode {
 
   private VuforiaCurrentGame vuforiaUltimateGoal;

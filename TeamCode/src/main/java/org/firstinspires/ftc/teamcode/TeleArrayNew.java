@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.drivebase.*;
 
 
 //***************************************************************************************************************************
-@TeleOp(name = "New TeleArray")
+@TeleOp(name = "New TeleArray", group = "TeleDrive")
 
 public class TeleArrayNew extends LinearOpMode {
   private DriveBase driveBase;
