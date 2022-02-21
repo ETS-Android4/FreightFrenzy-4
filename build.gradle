@@ -9,12 +9,14 @@ configurations {
 }
 
 buildscript {
+    ext.kotlin_version = '1.6.20-M1'
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
