@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.drivebase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.ExportClassToBlocks;
+import org.firstinspires.ftc.robotcore.external.ExportToBlocks;
 import org.firstinspires.ftc.teamcode.diagnostics.util.Testable;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.Subassembly;
@@ -22,7 +25,8 @@ import java.util.Hashtable;
  * When using the driveBase in your OpMode, declare a variable of the appropriate DriveBase subclass type
  * in your OpMode class and assign a new instance of that subclass, passing in the hardware map from the OpMode.
  */
-public abstract class DriveBase implements Subassembly {
+@ExportClassToBlocks
+public abstract class DriveBase implements Subassembly, HardwareDevice {
     protected HardwareMap hardwareMap;
 
     /**
@@ -31,7 +35,7 @@ public abstract class DriveBase implements Subassembly {
      */
     public DriveBase(HardwareMap hwMap) {
         hardwareMap = hwMap;
-        initMotors();
+        resetDeviceConfigurationForOpMode();
     }
     /**
      * Constants to represent drive speeds that are useful.  Set power values for each in initDriveSpeedConfiguration().
@@ -151,6 +155,11 @@ public abstract class DriveBase implements Subassembly {
      * Initialize all motors to run using encoders.
      * Set travel to forward and power to  0.
      */
+    @ExportToBlocks(
+            heading = "drivebase.initMotors",
+            comment = "Initialize all drive motors",
+            tooltip = "Stop, reset, brake, set to default directions, set power to 0",
+            color = 200)
     public void initMotors() {
 
         initMotorConfigurations();
@@ -181,6 +190,7 @@ public abstract class DriveBase implements Subassembly {
     /**
      * Remove instances of motors, travel directions, speeds
      */
+    @Deprecated
     public void cleanup() {
         stop();
         motorConfigurations.clear();
@@ -189,10 +199,82 @@ public abstract class DriveBase implements Subassembly {
     }
 
     /**
+     * Closes this device
+     */
+    @Override
+    public void close() {
+        stop();
+        for (DcMotor motor :
+                wheelMotors) {
+            motor.close();
+        }
+        motorConfigurations.clear();
+        driveSpeedConfigurations.clear();
+    }
+
+    /**
+     * Returns an indication of the manufacturer of this device.
+     *
+     * @return the device's manufacturer
+     */
+    @Override
+    public Manufacturer getManufacturer() {
+        return Manufacturer.Other;
+    }
+
+    /**
+     * Returns a string suitable for display to the user as to the type of device.
+     * Note that this is a device-type-specific name; it has nothing to do with the
+     * name by which a user might have configured the device in a robot configuration.
+     *
+     * @return device manufacturer and name
+     */
+    @Override
+    public String getDeviceName() {
+        return "MMMDrivebase";
+    }
+
+    /**
+     * Get connection information about this device in a human readable format
+     *
+     * @return connection info
+     */
+    @Override
+    public String getConnectionInfo() {
+        return null;
+    }
+
+    /**
+     * Version
+     *
+     * @return get the version of this device
+     */
+    @Override
+    public int getVersion() {
+        return 0;
+    }
+
+    /**
+     * Resets the device's configuration to that which is expected at the beginning of an OpMode.
+     * For example, motors will reset the their direction to 'forward'.
+     */
+    @Override
+    public void resetDeviceConfigurationForOpMode() {
+        initMotors();
+    }
+
+    /**
      * Set the runmode on all motors.
      * @param runMode how the motors should run - use the enum.
      * @return boolean success
      */
+    @ExportToBlocks(
+            comment = "Set all motors to the same runmode",
+            tooltip = "Use DcMotor RunModes",
+            color = 200,
+            heading = "drivebase.setRunMode",
+            parameterLabels = {"runMode"}
+    )
     public boolean setRunMode(DcMotor.RunMode runMode) {
         try {
             DcMotor[] motors = getMotors();
@@ -212,6 +294,13 @@ public abstract class DriveBase implements Subassembly {
      * @param behavior zero power behavior - use the enum
      * @return boolean success
      */
+    @ExportToBlocks(
+            comment = "Set all motors to the same stop mode",
+            tooltip = "Use DcMotor Zero Power Behaviors",
+            color = 200,
+            heading = "drivebase.setStopMode",
+            parameterLabels = {"zeroPowerBehavior"}
+    )
     public boolean setStopMode(DcMotor.ZeroPowerBehavior behavior) {
         try {
             for (DcMotor motor : getMotors()) {
@@ -229,6 +318,11 @@ public abstract class DriveBase implements Subassembly {
      * Returns the encoder values for all motors.
      * @return current positions of all motors, in order configured.
      */
+    @ExportToBlocks(
+            heading = "drivebase.getEncoderPositions",
+            comment = "get encoder positions for all wheels",
+            tooltip = "Returns an array of integers, which are the encoder positions for each wheel, in order.",
+            color = 200)
     public int[] getEncoderPositions() {
         DcMotor[] motors = getMotors();
         int[] positions = new int[motors.length];
@@ -243,6 +337,11 @@ public abstract class DriveBase implements Subassembly {
      * @param tolerance position tolerance
      * @return position tolerance from each motor, in order configured.
      */
+    @ExportToBlocks(
+            heading = "drivebase.setPositionTolerance",
+            comment = "Sets the tolerance on all drive motors",
+            tooltip = "When running with encoders, set the tolerance.",
+            color = 200)
     public int[] setPositionTolerance(int tolerance) {
         // set position tolerance
         DcMotor[] motors = getMotors();
@@ -259,6 +358,11 @@ public abstract class DriveBase implements Subassembly {
      * This probably is unnecessary.  We can remove it if so.
      * @return position tolerance from each motor, in order configured.
      */
+    @ExportToBlocks(
+            heading = "drivebase.getPositionTolerance",
+            comment = "Gets the tolerance for all drive motors",
+            tooltip = "When running with encoders, set the tolerance.",
+            color = 200)
     public int[] getPositionTolerance() {
         // set position tolerance
         DcMotor[] motors = getMotors();
@@ -272,6 +376,7 @@ public abstract class DriveBase implements Subassembly {
     /**
      * Returns the current position of each motor as an integer array.
      */
+    @Deprecated
     public int[] checkMotorPositions() {
         DcMotor[] motors = getMotors();
         int[] positions = new int[motors.length];
@@ -287,8 +392,9 @@ public abstract class DriveBase implements Subassembly {
      * @param tolerance
      * @return
      */
+    @Deprecated
     public boolean[] stopOnTicks(int[] targetTicks, int tolerance) {
-        int[] positions = checkMotorPositions();
+        int[] positions = getEncoderPositions();
         DcMotor[] motors = getMotors();
         // track which motors are stopped by this
         boolean[] isStopped = new boolean[motors.length];
@@ -377,6 +483,11 @@ public abstract class DriveBase implements Subassembly {
         return null;
     }
 
+    @ExportToBlocks(
+            heading = "drivebase.isBusy",
+            comment = "If any drive motors are running, the drivebase is busy.",
+            tooltip = "If it's not stopped, it's busy.",
+            color = 200)
     public boolean isBusy() {
         DcMotor[] motors = getMotors();
         for (DcMotor motor : motors) {
@@ -399,6 +510,11 @@ public abstract class DriveBase implements Subassembly {
      * Stop all motors - set power to 0.
      * @return power
      */
+    @ExportToBlocks(
+            heading = "drivebase.stop",
+            comment = "Stops all drive motors",
+            tooltip = "Sets the power on all motors to 0.",
+            color = 200)
     public double stop()  {
         DcMotor[] motors = getMotors();
         for (DcMotor motor : motors) {
@@ -411,6 +527,11 @@ public abstract class DriveBase implements Subassembly {
      * Is the drivebase really stopped, by using the runmode STOP_AND_RESET_ENCODER?
      * @return
      */
+    @ExportToBlocks(
+            heading = "drivebase.isStopped",
+            comment = "Is it stopped?",
+            tooltip = "If all motors are at runmode STOP, it's stopped.",
+            color = 200)
     public boolean isStopped() {
         DcMotor[] motors = getMotors();
         boolean stopped = true;
@@ -426,6 +547,13 @@ public abstract class DriveBase implements Subassembly {
      * @param driveSpeed how fast?
      * @return the power to the motors
      */
+    @ExportToBlocks(
+            heading = "drivebase.go",
+            comment = "Goes in a specified direction.",
+            tooltip = "Sets the power appropriate for the direction the motor is set to.",
+            color = 200,
+            parameterLabels = { "direction", "driveSpeed" }
+    )
     public double go(TravelDirection direction, DriveSpeed driveSpeed)  {
         double power = getDriveSpeedPower(driveSpeed);
         return go(direction, power);
