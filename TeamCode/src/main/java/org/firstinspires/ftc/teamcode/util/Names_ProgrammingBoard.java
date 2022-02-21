@@ -41,7 +41,7 @@ public class Names_ProgrammingBoard {
     // public static final String motor_DuckySpinner = "left_front";
 
     public static final String range_Front = "front";
-    // public static final String range_Rear = "front";
+    public static final String range_Rear = "rear";
     public static final String range_Left = "front";
     public static final String range_Right = "front";
 

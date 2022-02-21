@@ -17,7 +17,7 @@ public class Names_FreightFrenzyRobot {
     // public static final String motor_DuckySpinner = "duckySpinner1";
 
     public static final String range_Front = "front";
-    //public static final String range_Rear = "rear";
+    public static final String range_Rear = "rear";
     public static final String range_Left = "left";
     public static final String range_Right = "right";
 
