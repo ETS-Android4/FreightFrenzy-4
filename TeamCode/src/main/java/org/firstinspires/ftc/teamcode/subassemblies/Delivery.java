@@ -16,12 +16,13 @@ import org.firstinspires.ftc.teamcode.util.Subassembly;
  */
 public class Delivery implements Subassembly {
 
+    public static final double ENCODER_EVENTS_PER_REVOLUTION = 1425.1;
     private static final double CHUTE_COMPACT_POSITION = 0;
     private static final double CHUTE_OPEN_POSITION = 0.5;
     public static final int SLIDE_HOME_POSITION = 0;
     public static final int SLIDE_LOW_POSITION = 200;
     public static final int SLIDE_MID_POSITION = 500;
-    public static final int SLIDE_HIGH_POSITION = 800;
+    public static final int SLIDE_HIGH_POSITION = (1090/360) * ENCODER_EVENTS_PER_REVOLUTION;
     public static final int SLIDE_CAP_POSITION = 1000;
     private static final double DOOR_CLOSED_POSITION = 0;
     private static final double DOOR_OPEN_POSITION = 0.5;
